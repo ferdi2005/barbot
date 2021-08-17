@@ -2,7 +2,7 @@
 
 Backend in  Ruby on Rails per l'invio automatico di messaggi su Telegram agli "iscritti" (che possono essere privati, canali in cui il bot è admin o gruppi) del contenuto del feed RSS indicato, a patto che ci siano i campi titolo, descrizione e URL.
 ## Configurazione
-L'installazione è la solita delle applicazioni Ruby on Rails. In questo caso il database usato (e consigliato) è PostgreSQL.
+L'installazione è la solita delle applicazioni Ruby on Rails. In questo caso il database usato (e consigliato) è PostgreSQL. Va attivato anche Sidekiq con Redis.
 
 Vanno impostate le seguenti variabili d'ambiente:
 
