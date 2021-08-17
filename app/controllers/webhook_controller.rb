@@ -2,6 +2,7 @@ require 'telegram/bot'
 class WebhookController < ApplicationController
   def receive
     if !params[:message].nil?
+      return if params[:message][:text].nil? && params[:message][:caption].nil?
       message = params[:message]
     else
       message = params[:channel_post]
