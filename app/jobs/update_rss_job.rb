@@ -10,9 +10,8 @@ class UpdateRssJob < ApplicationJob
         feed.items.each do |item|
           unless Article.where(title: item.title).any? || Article.where(guid: item.guid.content).any?
             description = item.description.match(/<p>([^<]*)<\/p>/)
+            Article.create(title: item.title, guid: item.guid.content)
             unless description.nil?
-              Article.create(title: item.title, guid: item.guid.content)
-
               Chat.all.each do |chat|
                 begin
                   bot.api.send_message(chat_id: chat.chat_id, text: "<b>#{item.title}</b>\n#{description[1]}\n<a href='#{item.link}'>Leggi tutto l'articolo</a>", parse_mode: :HTML)
