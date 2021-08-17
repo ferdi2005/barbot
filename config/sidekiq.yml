@@ -1,0 +1,4 @@
+:schedule:
+  update_rss:
+    cron: "*/5 * * * *"
+    class: UpdateRssJob
