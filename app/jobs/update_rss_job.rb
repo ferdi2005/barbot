@@ -14,7 +14,7 @@ class UpdateRssJob < ApplicationJob
             unless description.nil?
               Chat.all.each do |chat|
                 begin
-                  bot.api.send_message(chat_id: chat.chat_id, text: "<b>#{item.title}</b>\n#{description[1].truncate(25, separator: ' ', omission: '...')}\n<a href='#{item.link}'>Leggi tutto l'articolo</a>", parse_mode: :HTML)
+                  bot.api.send_message(chat_id: chat.chat_id, text: "<b>#{item.title}</b>\n#{description[1].truncate(100, separator: ' ', omission: '...')}\n<a href='#{item.link}'>Leggi tutto l'articolo</a>", parse_mode: :HTML)
                 rescue => e
                   bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio dell'articolo <b>#{item.title}</b> #{item.link} a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
                 end
