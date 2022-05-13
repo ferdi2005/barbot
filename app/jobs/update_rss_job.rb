@@ -9,7 +9,7 @@ class UpdateRssJob < ApplicationJob
         feed = RSS::Parser.parse(rss)
         feed.items.each do |item|
           unless Article.where(title: item.title).any? || Article.where(guid: item.guid.content).any?
-            description = item.description.match(/<p>([^<]*)<\/p>/)
+            description = item.description.gsub(/<\/*span>/,"").gsub(/<\/*sup>/,"").match(/<p>([^<]*)<\/p>/)
             Article.create(title: item.title, guid: item.guid.content)
             unless description.nil?
               Chat.all.each do |chat|
