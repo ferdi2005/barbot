@@ -5,7 +5,7 @@ class UpdateRssJob < ApplicationJob
   def perform(*args)
     Telegram::Bot::Client.run(ENV["TOKEN"]) do |bot|
       url = ENV["FEED"]
-      open(url) do |rss|
+      URI.open(url) do |rss|
         feed = RSS::Parser.parse(rss)
         feed.items.each do |item|
           unless Article.where(title: item.title).any? || Article.where(guid: item.guid.content).any?

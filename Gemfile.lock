@@ -117,6 +117,7 @@ GEM
     concurrent-ruby (1.1.10)
     connection_pool (2.2.5)
     crass (1.0.6)
+    date (3.2.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     digest (3.1.0)
@@ -184,6 +185,10 @@ GEM
       racc (~> 1.4)
     nokogiri (1.13.7-x86_64-linux)
       racc (~> 1.4)
+    open-uri (0.2.0)
+      stringio
+      time
+      uri
     pg (1.4.1)
     psych (3.3.2)
     public_suffix (4.0.7)
@@ -275,18 +280,22 @@ GEM
     sshkit (1.21.2)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    stringio (3.0.2)
     strscan (3.0.3)
     thor (1.2.1)
     thread_safe (0.3.6)
     thwait (0.2.0)
       e2mmap
     tilt (2.0.10)
+    time (0.2.0)
+      date
     timeout (0.3.0)
     turbolinks (5.2.1)
       turbolinks-source (~> 5.2)
     turbolinks-source (5.2.0)
     tzinfo (1.2.9)
       thread_safe (~> 0.1)
+    uri (0.11.0)
     virtus (2.0.0)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -333,6 +342,7 @@ DEPENDENCIES
   net-imap
   net-pop
   net-smtp
+  open-uri
   pg (>= 0.18, < 2.0)
   psych (< 4.0.0)
   puma
