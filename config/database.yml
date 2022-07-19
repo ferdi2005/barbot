@@ -80,6 +80,7 @@ test:
 #
 production:
   <<: *default
-  database: rssbot_telegram_production
-  username: rssbot_telegram
+  host: localhost
+  database: rssbot_wikinotizie_production
+  username: rssbot_wikinotizie
   password: <%= ENV['RSSBOT_TELEGRAM_DATABASE_PASSWORD'] %>
