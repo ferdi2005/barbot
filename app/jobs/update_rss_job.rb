@@ -6,9 +6,9 @@ class UpdateRssJob < ApplicationJob
     Telegram::Bot::Client.run(ENV["TOKEN"]) do |bot|
 
       wikinews = MediawikiApi::Client.new "https://it.wikinews.org/w/api.php"
-      articles = wikinews.query(:prop => :extracts, :generator => :categorymembers, :gcmtitle => "Categoria:Pubblicati", gcmlimit: 1000, gsort: :timestamp, gcmdir: :newer)["query"]["pages"]
+      articles = wikinews.query(:prop => :extracts, :generator => :categorymembers, :explaintext => 1, :exsectionformat => :plain, :gcmtitle => "Categoria:Pubblicati", :gcmlimit => 20, :gcmsort => :timestamp, :gcmdir => :descending, :exchars => 1200, :exintro => true)["query"]["pages"] # Se non viene richiesta solo la prima sezione, textextracts si rifiuta di procedere per più pagine "Più estratti possono essere restituiti solo se 'exintro' è impostato su 'true'.)" 20 è il numero massimo
 
-      articles.each do |article|
+      articles.each do |pageid, article|
         next if Article.exists?(guid: article["pageid"], title: article["title"])
         
         Article.create(title: article["title"], guid: article["pageid"])

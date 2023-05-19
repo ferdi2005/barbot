@@ -34,7 +34,7 @@ gem 'rss'
 
 gem 'telegram-bot-ruby', "~> 0.23.0"
 
-gem 'mediawiki_api'
+gem 'mediawiki_api', github: "ferdi2005/mediawiki-ruby-api"
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
