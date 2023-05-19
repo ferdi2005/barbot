@@ -32,7 +32,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'rss'
 
-gem 'telegram-bot-ruby', github: "atipugin/telegram-bot-ruby"
+gem 'telegram-bot-ruby', "~> 0.23.0"
 
 gem 'mediawiki_api'
 
