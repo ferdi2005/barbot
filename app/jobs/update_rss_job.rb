@@ -15,9 +15,9 @@ class UpdateRssJob < ApplicationJob
 
         Chat.all.each do |chat|
           begin
-            bot.api.send_message(chat_id: chat.chat_id, text: "<b>#{article["title"]}</b>\n#{article["extract"]}...\n<a href='https://it.wikinews.org/wiki/#{CGI.escape(article["title"])}'>Leggi tutto l'articolo</a>", parse_mode: :HTML)
+            bot.api.send_message(chat_id: chat.chat_id, text: "<b>#{article["title"]}</b>\n#{article["extract"]}...\n<a href='https://it.wikinews.org/wiki/#{CGI.escape(article["title"]).gsub("+","_")}'>Leggi tutto l'articolo</a>", parse_mode: :HTML)
           rescue => e
-            bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio dell'articolo <b>#{article["title"]}</b> https://it.wikinews.org/wiki/#{CGI.escape(article["title"])} a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
+            bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio dell'articolo <b>#{article["title"]}</b> https://it.wikinews.org/wiki/#{CGI.escape(article["title"]).gsub("+","_")} a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
           end
         end 
       end
