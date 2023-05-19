@@ -4,26 +4,22 @@ class UpdateRssJob < ApplicationJob
 
   def perform(*args)
     Telegram::Bot::Client.run(ENV["TOKEN"]) do |bot|
-      url = ENV["FEED"]
-      URI.open(url) do |rss|
-        feed = RSS::Parser.parse(rss)
-        feed.items.each do |item|
-          unless Article.where(title: item.title).any? || Article.where(guid: item.guid.content).any?
-            description = item.description.gsub(/<\/*span>/,"").gsub(/<\/*sup>/,"").match(/<p>([^<]*)<\/p>/)
-            Article.create(title: item.title, guid: item.guid.content)
-            unless description.nil?
-              Chat.all.each do |chat|
-                begin
-                  bot.api.send_message(chat_id: chat.chat_id, text: "<b>#{item.title}</b>\n#{description[1].truncate(250, separator: ' ', omission: '...')}\n<a href='#{item.link}'>Leggi tutto l'articolo</a>", parse_mode: :HTML)
-                rescue => e
-                  bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio dell'articolo <b>#{item.title}</b> #{item.link} a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
-                end
-              end
-            else
-              bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Il bot non è riuscito a processare l'articolo <b>#{item.title}</b> #{item.link}", parse_mode: :HTML)
-            end
+
+      wikinews = MediawikiApi::Client.new "https://it.wikinews.org/w/api.php"
+      articles = wikinews.query(:prop => :extracts, :generator => :categorymembers, :gcmtitle => "Categoria:Pubblicati", gcmlimit: 1000, gsort: :timestamp, gcmdir: :newer)["query"]["pages"]
+
+      articles.each do |article|
+        next if Article.exists?(guid: article["pageid"], title: article["title"])
+        
+        Article.create(title: article["title"], guid: article["pageid"])
+
+        Chat.all.each do |chat|
+          begin
+            bot.api.send_message(chat_id: chat.chat_id, text: "<b>#{article["title"]}</b>\n#{article["extract"]}...\n<a href='https://it.wikinews.org/wiki/#{CGI.escape(article["title"])}'>Leggi tutto l'articolo</a>", parse_mode: :HTML)
+          rescue => e
+            bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio dell'articolo <b>#{article["title"]}</b> https://it.wikinews.org/wiki/#{CGI.escape(article["title"])} a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
           end
-        end
+        end 
       end
     end
   end
