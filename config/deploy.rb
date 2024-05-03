@@ -1,7 +1,7 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.17.0"
 
-set :application, "rssbot-wikinotizie"
+set :application, "rssbot-barbot"
 
 server 'c.ferdi.cc', port: 22, roles: [:web, :app, :db], primary: true
 set :repo_url, "git@github.com:ferdi2005/rssbot.git"
@@ -36,15 +36,15 @@ append :linked_dirs, "log", "tmp/pids", "tmp/sockets", "tmp/cache", "public/uplo
 
 namespace :rails do
     desc 'Open a rails console `cap [staging] rails:console [server_index default: 0]`'
-    task :console do    
+    task :console do
       server = roles(:app)[ARGV[2].to_i]
-  
+
       puts "Opening a console on: #{server.hostname}...."
-  
+
       cmd = "ssh #{fetch(:user)}@#{server.hostname} -t 'cd #{fetch(:deploy_to)}/current && RAILS_ENV=#{fetch(:rails_env)} bundle exec rails console'"
-  
+
       puts cmd
-  
+
       exec cmd
     end
 end
@@ -59,8 +59,8 @@ namespace :deploy do
       end
     end
 end
-  
-  
+
+
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 

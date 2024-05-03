@@ -5,21 +5,37 @@ class UpdateRssJob < ApplicationJob
   def perform(*args)
     Telegram::Bot::Client.run(ENV["TOKEN"]) do |bot|
 
-      wikinews = MediawikiApi::Client.new "https://it.wikinews.org/w/api.php"
-      articles = wikinews.query(:prop => :extracts, :generator => :categorymembers, :explaintext => 1, :exsectionformat => :plain, :gcmtitle => "Categoria:Pubblicati", :gcmlimit => 20, :gcmsort => :timestamp, :gcmdir => :descending, :exchars => 1200, :exintro => true)["query"]["pages"] # Se non viene richiesta solo la prima sezione, textextracts si rifiuta di procedere per più pagine "Più estratti possono essere restituiti solo se 'exintro' è impostato su 'true'.)" 20 è il numero massimo
+      page = HTTParty.get("https://it.wikipedia.org/w/api.php", query: { action: :query, prop: :revisions, rvslots: "*", rvprop: :content, titles:"Template:Bar3/titoli/0", format: :json})
+      bar_content = page["query"]["pages"].first[1]["revisions"].first["slots"]["main"]["*"]
 
-      articles.each do |pageid, article|
-        next if Article.exists?(guid: article["pageid"], title: article["title"])
-        
-        Article.create(title: article["title"], guid: article["pageid"])
+      break if page.strip == "<dl><dd>''Nessuna discussione.''</dd></dl>"
+
+      bar_content = bar_content.gsub("<dl><dd>", "").gsub("</dd></dl>","").gsub("<br/>","")
+
+      discussioni = bar_content.split(" &middot; ")
+
+      discussioni.each do |article|
+        if article.starts_with?("{{")
+          title = article.match(/{{Bar3\/esterna\|([^\}}]+)}}/)[1].split("|")[1]
+          url = "https://it.wikipedia.org/wiki/#{article.match(/{{Bar3\/esterna\|([^\}}]+)}}/)[1].split("|")[0]}"
+          external = true
+        else
+          title = article.match(/\[\[([^\]]+)\]\]/)[1].split("|")[1]
+          url = "https://it.wikipedia.org/wiki/#{article.match(/\[\[([^\]]+)\]\]/)[1].split("|")[1]}"
+          external = false
+        end
+
+        next if Article.exists?(title: title)
+
+        Article.create(title: title)
 
         Chat.all.each do |chat|
           begin
-            bot.api.send_message(chat_id: chat.chat_id, text: "<b>#{article["title"]}</b>\n#{article["extract"]}...\n<a href='https://it.wikinews.org/wiki/#{CGI.escape(article["title"]).gsub("+","_")}'>Leggi tutto l'articolo</a>", parse_mode: :HTML)
+            bot.api.send_message(chat_id: chat.chat_id, text: "<b>Nuovo messaggio al bar #{external ? "(esterno)" : ""}: <a href='#{url}'>#{title}</a>", parse_mode: :HTML)
           rescue => e
             bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio dell'articolo <b>#{article["title"]}</b> https://it.wikinews.org/wiki/#{CGI.escape(article["title"]).gsub("+","_")} a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
           end
-        end 
+        end
       end
     end
   end

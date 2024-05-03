@@ -81,6 +81,6 @@ test:
 production:
   <<: *default
   host: localhost
-  database: rssbot_wikinotizie_production
-  username: rssbot_wikinotizie
+  database: rssbot_barbot_production
+  username: rssbot_barbot
   password: <%= ENV['RSSBOT_TELEGRAM_DATABASE_PASSWORD'] %>
