@@ -8,7 +8,7 @@ class UpdateRssJob < ApplicationJob
       page = HTTParty.get("https://it.wikipedia.org/w/api.php", query: { action: :query, prop: :revisions, rvslots: "*", rvprop: :content, titles:"Template:Bar3/titoli/0", format: :json})
       bar_content = page["query"]["pages"].first[1]["revisions"].first["slots"]["main"]["*"]
 
-      break if page.strip == "<dl><dd>''Nessuna discussione.''</dd></dl>"
+      break if bar_content.strip == "<dl><dd>''Nessuna discussione.''</dd></dl>"
 
       bar_content = bar_content.gsub("<dl><dd>", "").gsub("</dd></dl>","").gsub("<br/>","")
 
