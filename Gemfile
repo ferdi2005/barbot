@@ -79,3 +79,4 @@ gem 'net-imap', require: false
 gem 'net-pop', require: false
 
 gem 'open-uri'
+gem "httparty", "~> 0.22.0"

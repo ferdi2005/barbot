@@ -52,6 +52,7 @@ class WebhookController < ApplicationController
 
     respond_to do |format|
       format.json { render :json => {:result => :done }, :status => 200 }
+      format.all { render :status => 200}
     end
   end
 end
