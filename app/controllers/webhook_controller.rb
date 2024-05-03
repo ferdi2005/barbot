@@ -9,17 +9,17 @@ class WebhookController < ApplicationController
     end
 
     return if message.nil?
-    
+
     if message[:type] != "channel"
       id = message[:chat][:id]
       username = message[:chat][:username]
       type = message[:chat][:type]
 
-      unless message[:text].nil? 
+      unless message[:text].nil?
         text = message[:text]
       else
         text = message[:caption]
-      end  
+      end
     else
       # canale
       id = message[:sender_chat][:id]
@@ -37,11 +37,11 @@ class WebhookController < ApplicationController
           chat.update(username: username)
         end
 
-        bot.api.send_message(chat_id: id, text: "Il bot è stato attivato. Da ora riceverai le notizie da Wikinotizie in Italiano (https://it.wikinotizie.org)")
+        bot.api.send_message(chat_id: id, text: "Il bot è stato attivato. Da ora riceverai gli aggiornamenti del bar di Wikipedia in Italiano")
       elsif text.start_with?("/stop")
         if (chat = Chat.find_by(chat_id: id))
           chat.destroy
-          bot.api.send_message(chat_id: id, text: "Il bot è stato disattivato. Da ora non riceverai più le notizie da Wikinotizie in Italiano (https://it.wikinotizie.org). Usa /start per attivarlo di nuovo.")
+          bot.api.send_message(chat_id: id, text: "Il bot è stato disattivato. Da ora non riceverai più gli aggiornamenti del bar di Wikipedia in Italiano. Usa /start per attivarlo di nuovo.")
         else
           bot.api.send_message(chat_id: id, text: "Il bot non era attivo.")
         end
