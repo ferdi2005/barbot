@@ -21,7 +21,7 @@ class UpdateRssJob < ApplicationJob
           external = true
         else
           title = article.match(/\[\[([^\]]+)\]\]/)[1].split("|")[1]
-          url = "https://it.wikipedia.org/wiki/#{article.match(/\[\[([^\]]+)\]\]/)[1].split("|")[1]}"
+          url = "https://it.wikipedia.org/wiki/#{article.match(/\[\[([^\]]+)\]\]/)[1].split("|")[0]}"
           external = false
         end
 
@@ -31,7 +31,7 @@ class UpdateRssJob < ApplicationJob
 
         Chat.all.each do |chat|
           begin
-            bot.api.send_message(chat_id: chat.chat_id, text: "<b>Nuovo messaggio al bar #{external ? "(esterno)</b>" : ""}: <a href='#{url}'>#{title}</a>", parse_mode: :HTML)
+            bot.api.send_message(chat_id: chat.chat_id, text: "<b>Nuova discussione al bar #{external ? "(esterna)</b>" : ""}: <a href='#{url}'>#{title}</a>", parse_mode: :HTML)
           rescue => e
             bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio del massagigo al bar <a href='#{url}'>#{title}</a> a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
           end
