@@ -4,13 +4,13 @@ lock "~> 3.17.0"
 set :application, "rssbot-barbot"
 
 server 'c.ferdi.cc', port: 22, roles: [:web, :app, :db], primary: true
-set :repo_url, "git@github.com:ferdi2005/rssbot.git"
+set :repo_url, "git@github.com:ferdi2005/barbot.git"
 set :sidekiq_service_unit_name, "#{fetch(:application)}-sidekiq"
 
 set :user, 'deploy'
 set :puma_threads,    [4, 16]
 set :puma_workers,    0
-set :branch, "wikinotizie"
+set :branch, "main"
 
 set :pty,             true
 set :use_sudo,        false
