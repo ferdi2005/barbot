@@ -25,13 +25,15 @@ class UpdateRssJob < ApplicationJob
           external = false
         end
 
+        next if title.include?("SCRIVI QUI SOLO IL TITOLO")
+
         next if Article.exists?(title: title)
 
         Article.create(title: title)
 
         Chat.all.each do |chat|
           begin
-            bot.api.send_message(chat_id: chat.chat_id, text: "<b>Nuova discussione al bar #{external ? "(esterna)</b>" : ""}: <a href='#{url}'>#{title}</a>", parse_mode: :HTML)
+            bot.api.send_message(chat_id: chat.chat_id, text: "<>Nuova discussione al bar #{external ? "(esterna)" : ""}</b>: <a href='#{url}'>#{title}</a>", parse_mode: :HTML)
           rescue => e
             bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio del massagigo al bar <a href='#{url}'>#{title}</a> a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
           end
