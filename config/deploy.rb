@@ -1,6 +1,4 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.17.0"
-
 set :application, "rssbot-barbot"
 
 server 'c.ferdi.cc', port: 22, roles: [:web, :app, :db], primary: true
