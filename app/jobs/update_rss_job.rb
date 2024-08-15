@@ -27,6 +27,8 @@ class UpdateRssJob < ApplicationJob
           external = false
         end
 
+        escaped_url = CGI.escapeHTML(url).gsub("?", "%3F").gsub("=", "%3D").gsub("&", "%26")
+
         existence = HTTParty.get("https://it.wikipedia.org/w/api.php", query: { action: :query, prop: :info, titles: existence_title, format: :json})
 
         next unless existence["query"]["pages"]["-1"].nil?
@@ -39,9 +41,9 @@ class UpdateRssJob < ApplicationJob
 
         Chat.all.each do |chat|
           begin
-            bot.api.send_message(chat_id: chat.chat_id, text: sanitize("<b>Nuova discussione al bar#{external ? " (esterna)" : ""}</b>: <a href='#{url}'>#{title}</a>"), parse_mode: :HTML)
+            bot.api.send_message(chat_id: chat.chat_id, text: "<b>Nuova discussione al bar#{external ? " (esterna)" : ""}</b>: <a href='#{escaped_url}'>#{title}</a>", parse_mode: :HTML)
           rescue => e
-            bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: sanitize("Errore #{e} nell'invio del messaggio al bar <a href='#{url}'>#{title}</a> a #{chat.chat_id} - #{chat.username}"), parse_mode: :HTML)
+            bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio del messaggio al bar <a href='#{escaped_url}'>#{title}</a> a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
           end
         end
       end
