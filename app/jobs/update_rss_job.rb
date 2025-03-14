@@ -43,7 +43,11 @@ class UpdateRssJob < ApplicationJob
           begin
             bot.api.send_message(chat_id: chat.chat_id, text: "<b>Nuova discussione al bar#{external ? " (esterna)" : ""}</b>: <a href='#{escaped_url}'>#{title}</a>", parse_mode: :HTML)
           rescue => e
-            bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio del messaggio al bar <a href='#{escaped_url}'>#{title}</a> a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
+            if e.error_code == 403
+              chat.destroy
+            else
+              bot.api.send_message(chat_id: ENV["FALLBACK"].to_i, text: "Errore #{e} nell'invio del messaggio al bar <a href='#{escaped_url}'>#{title}</a> a #{chat.chat_id} - #{chat.username}", parse_mode: :HTML)
+            end
           end
         end
       end
