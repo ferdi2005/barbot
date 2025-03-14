@@ -27,7 +27,7 @@ class UpdateRssJob < ApplicationJob
           external = false
         end
 
-        escaped_url = CGI.escapeHTML(url).gsub("?", "%3F").gsub("=", "%3D").gsub("&", "%26")
+        escaped_url = Addressable::URI.encode(url).gsub("?", "%3F").gsub("=", "%3D").gsub("&", "%26")
 
         existence = HTTParty.get("https://it.wikipedia.org/w/api.php", query: { action: :query, prop: :info, titles: existence_title, format: :json})
 

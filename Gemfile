@@ -80,3 +80,5 @@ gem 'net-pop', require: false
 
 gem 'open-uri'
 gem "httparty", "~> 0.22.0"
+
+gem "addressable", "~> 2.8"
